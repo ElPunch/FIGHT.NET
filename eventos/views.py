@@ -58,4 +58,4 @@ class EventosView(View):
 class paginaView(View):
     def get(self, request):
         eventos = Eventos.objects.all().values()
-        return render(request, 'eventos/index.html')
+        return render(request, 'eventos/index.html', {'eventos': eventos})

@@ -21,8 +21,6 @@
       {% for evento in eventos %}
       <div class="col-md-6 col-lg-4">
         <div class="card evento-card h-100">
-          <!-- Imagen -->
-          <img src="{% static 'mi_app/default_event.jpg' %}" class="card-img-top" alt="{{ evento.disciplina }}">
           <div class="card-body">
             <div class="event-date badge bg-danger mb-2">{{ evento.data|date:"d M Y" }}</div>
             <h5 class="card-title">{{ evento.nombre }}</h5>
