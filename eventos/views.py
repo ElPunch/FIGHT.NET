@@ -30,31 +30,6 @@ class EventosView(View):
         except:
             return HttpResponseBadRequest("Error al crear el evento")
 
-
-    """
-    def get(self, request):
-        data = {"respuesta": "hola mundo"}
-        return JsonResponse(data)
-    
-    def post(self, request):
-        try:
-            body = json.loads(request.body)
-        except:
-            return HttpResponseBadRequest("Formato invalido")
-        
-        data = {
-            "nombre": body.get("nombre"),
-            "descripcion": body.get("descripcion"),
-            "localizacion": body.get("localizacion"),
-            "organizador": body.get("organizador"),
-            "disciplina": body.get("disciplina"),
-            "usuario": body.get("usuario"),
-            "data": body.get("data")
-        }
-
-        return JsonResponse(data)
-    """
-
 class paginaView(View):
     def get(self, request):
         eventos = Eventos.objects.all().values()
