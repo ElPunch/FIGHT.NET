@@ -11,7 +11,7 @@ from django.shortcuts import render
 class EventosView(View):
     @method_decorator(csrf_exempt, name='dispatch')
     def get (self, request):
-        eventos = Eventos.objects.all().values()
+        eventos = Eventos.object.all().values()
         return JsonResponse(list(eventos), safe=False)
     
     def post(self, request):
