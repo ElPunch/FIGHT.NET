@@ -33,27 +33,24 @@ class EventosView(View):
             return HttpResponseBadRequest("Error al crear el evento")
 
 class paginaView(View):
+    @method_decorator(csrf_exempt, name='dispatch')
     def get(self, request):
         eventos = Eventos.objects.all().values()
         return render(request, 'eventos/index.html', {'eventos': eventos})
     
-    
     def post(self, request):
-    try:
-        # Handle form data from HTML form submission
-        eventos = Eventos.objects.create(
-            nombre=request.POST.get("nombre"),
-            descripcion=request.POST.get("descripcion", ""),
-            localizacion=request.POST.get("localizacion"),
-            organizador=request.POST.get("organizador"),
-            disciplina=request.POST.get("disciplina"),
-            usuario_id=1,  # You'll need to handle user authentication
-            data=request.POST.get("data")
-        )
-        # Redirect to avoid form resubmission
-        return redirect('/pagina/')
-    except Exception as e:
-        print(f"Error creating event: {str(e)}")  # For debugging
-        eventos = Eventos.objects.all()
-        return render(request, 'eventos/index.html', {'eventos': eventos})
+        try:
+            data = request.POST
+            evento = Eventos.objects.create(
+                nombre=data["nombre"],
+                descripcion=data["descripcion"],
+                localizacion=data["localizacion"],
+                organizador=data["organizador"],
+                disciplina=data["disciplina"],
+                usuario_id=data["usuario"], 
+                data=datetime.strptime(data["data"], '%Y-%m-%d %H:%M:%S')
+            )
+            return redirect('pagina')
+        except:
+            return HttpResponseBadRequest("Error al crear el evento")
     
