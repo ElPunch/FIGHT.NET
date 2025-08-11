@@ -1,6 +1,6 @@
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.views import View
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 import json
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -31,6 +31,34 @@ class EventosView(View):
             return JsonResponse({"mensaje": "Evento creado correctamente", "id": eventos.id})
         except Exception as e:
             return HttpResponseBadRequest("Error al crear el evento")
+        
+    def put(self, request, evento_id):
+        try:
+            evento = get_object_or_404(Eventos, id=evento_id)
+            data = json.loads(request.body)
+            
+            # Actualizar campos
+            evento.nombre = data.get("nombre", evento.nombre)
+            evento.descripcion = data.get("descripcion", evento.descripcion)
+            evento.localizacion = data.get("localizacion", evento.localizacion)
+            evento.organizador = data.get("organizador", evento.organizador)
+            evento.disciplina = data.get("disciplina", evento.disciplina)
+            evento.usuario_id = data.get("usuario", evento.usuario_id)
+            if "data" in data:
+                evento.data = data["data"]
+            
+            evento.save()
+            return JsonResponse({"mensaje": "Evento actualizado correctamente", "id": evento.id})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+    def delete(self, request, evento_id):
+        try:
+            evento = get_object_or_404(Eventos, id=evento_id)
+            evento.delete()
+            return JsonResponse({"mensaje": "Evento eliminado correctamente"})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
 
 class paginaView(View):
     @method_decorator(csrf_exempt, name='dispatch')
@@ -53,4 +81,6 @@ class paginaView(View):
             return redirect('pagina')
         except Exception as e:
             return HttpResponseBadRequest("Error al crear el evento")
+        
+
     
