@@ -81,6 +81,14 @@
             <div class="modal-footer justify-content-between">
               <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cerrar</button>
             </div>
+            <div>
+                <button type="button" class="btn btn-edit btn-sm me-2" data-bs-toggle="modal" data-bs-target="#editEventoModal{{ evento.id }}" data-bs-dismiss="modal">
+                  <i class="bi bi-pencil me-1"></i>Editar
+                </button>
+                <button type="button" class="btn btn-delete btn-sm" onclick="confirmarEliminar({{ evento.id }})">
+                  <i class="bi bi-trash me-1"></i>Eliminar
+                </button>
+              </div>
           </div>
         </div>
       </div>
