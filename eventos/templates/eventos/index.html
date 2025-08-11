@@ -42,6 +42,9 @@
     <div class="container">
       <a class="navbar-brand fw-bold" href="#">FIGHT.NET</a>
     </div>
+    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#crearEventoModal">
+        <i class="bi bi-plus-circle me-2"></i>Crear Evento
+    </button>
   </nav>
   <div class="container py-5 mt-4">
     <h2 class="section-title mb-4">Eventos Disponibles</h2>
@@ -84,6 +87,64 @@
       {% empty %}
       <p>No hay eventos disponibles.</p>
       {% endfor %}
+    </div>
+  </div>
+  <div class="modal fade" id="crearEventoModal" tabindex="-1" aria-labelledby="crearEventoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content modal-evento">
+        <div class="modal-header border-danger">
+          <h5 class="modal-title" id="crearEventoModalLabel">
+            <i class="bi bi-calendar-plus me-2"></i>Crear Nuevo Evento
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <form method="post">
+          {% csrf_token %}
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="nombre" class="form-label text-white">Nombre del Evento *</label>
+                <input type="text" class="form-control bg-dark text-white border-secondary" id="nombre" name="nombre" required>
+              </div>
+              <div class="col-md-6">
+                <label for="disciplina" class="form-label text-white">Disciplina *</label>
+                <select class="form-select bg-dark text-white border-secondary" id="disciplina" name="disciplina" required>
+                  <option value="">Seleccionar disciplina</option>
+                  <option value="MMA">MMA</option>
+                  <option value="Boxeo">Boxeo</option>
+                  <option value="Kickboxing">Kickboxing</option>
+                  <option value="Muay Thai">Muay Thai</option>
+                  <option value="Jiu-Jitsu">Jiu-Jitsu</option>
+                  <option value="Karate">Karate</option>
+                  <option value="Taekwondo">Taekwondo</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="data" class="form-label text-white">Fecha del Evento *</label>
+                <input type="date" class="form-control bg-dark text-white border-secondary" id="data" name="data" required>
+              </div>
+              <div class="col-md-6">
+                <label for="organizador" class="form-label text-white">Organizador *</label>
+                <input type="text" class="form-control bg-dark text-white border-secondary" id="organizador" name="organizador" required>
+              </div>
+              <div class="col-12">
+                <label for="localizacion" class="form-label text-white">Ubicación *</label>
+                <input type="text" class="form-control bg-dark text-white border-secondary" id="localizacion" name="localizacion" placeholder="Ciudad, Estado/País" required>
+              </div>
+              <div class="col-12">
+                <label for="descripcion" class="form-label text-white">Descripción</label>
+                <textarea class="form-control bg-dark text-white border-secondary" id="descripcion" name="descripcion" rows="4" placeholder="Describe los detalles del evento, categorías, premios, etc."></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer border-danger justify-content-between">
+            <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-danger">
+              <i class="bi bi-check2-circle me-1"></i>Crear Evento
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </body>

@@ -22,5 +22,5 @@ from eventos.views import paginaView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('eventos/', EventosView.as_view(), name='eventos'),
-    path('pagina/', paginaView.as_view())
+    path('pagina/', paginaView.as_view(), name='pagina'),
 ]
