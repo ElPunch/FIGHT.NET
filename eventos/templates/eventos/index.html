@@ -162,6 +162,8 @@
     </div>
   </div>
 
+  
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     document.getElementById('crearEventoForm').addEventListener('submit', function(e) {
@@ -177,6 +179,88 @@
                              String(date.getHours()).padStart(2, '0') + ':' + 
                              String(date.getMinutes()).padStart(2, '0') + ':00';
         dataFormatted.value = formattedDate;
+      }
+    });
+      function setupEditForm(eventoId) {
+      const form = document.getElementById(`editEventoForm${eventoId}`);
+      if (form) {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          const formData = new FormData(form);
+          const data = {
+            nombre: formData.get('nombre'),
+            disciplina: formData.get('disciplina'),
+            data: formData.get('data'),
+            organizador: formData.get('organizador'),
+            usuario: formData.get('usuario'),
+            localizacion: formData.get('localizacion'),
+            descripcion: formData.get('descripcion')
+          };
+
+          fetch(`/eventos/${eventoId}/`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify(data)
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.mensaje) {
+              alert('Evento actualizado correctamente');
+              location.reload();
+            } else {
+              alert('Error al actualizar el evento: ' + (data.error || 'Error desconocido'));
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('Error al actualizar el evento');
+          });
+        });
+      }
+    }
+
+    // Configurar formularios de edición para todos los eventos
+    {% for evento in eventos %}
+    setupEditForm({{ evento.id }});
+    {% endfor %}
+
+    // Función para confirmar eliminación
+    function confirmarEliminar(eventoId) {
+      eventoIdToDelete = eventoId;
+      const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+      modal.show();
+    }
+
+    // Manejar la confirmación de eliminación
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+      if (eventoIdToDelete) {
+        fetch(`/eventos/${eventoIdToDelete}/`, {
+          method: 'DELETE',
+          headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.mensaje) {
+            alert('Evento eliminado correctamente');
+            location.reload();
+          } else {
+            alert('Error al eliminar el evento: ' + (data.error || 'Error desconocido'));
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Error al eliminar el evento');
+        });
+
+        // Cerrar modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal'));
+        modal.hide();
       }
     });
   </script>
