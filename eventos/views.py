@@ -29,7 +29,7 @@ class EventosView(View):
                 data=data["data"]
             )
             return JsonResponse({"mensaje": "Evento creado correctamente", "id": eventos.id})
-        except:
+        except Exception as e:
             return HttpResponseBadRequest("Error al crear el evento")
 
 class paginaView(View):
@@ -51,6 +51,6 @@ class paginaView(View):
                 data=datetime.strptime(data["data"], '%Y-%m-%d %H:%M:%S')
             )
             return redirect('pagina')
-        except:
+        except Exception as e:
             return HttpResponseBadRequest("Error al crear el evento")
     
