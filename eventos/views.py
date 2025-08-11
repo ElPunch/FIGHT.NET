@@ -32,6 +32,29 @@ class EventosView(View):
         except Exception as e:
             return HttpResponseBadRequest("Error al crear el evento")
         
+
+class paginaView(View):
+    @method_decorator(csrf_exempt, name='dispatch')
+    def get(self, request):
+        eventos = Eventos.objects.all().values()
+        return render(request, 'eventos/index.html', {'eventos': eventos})
+    
+    def post(self, request):
+        try:
+            data = request.POST
+            evento = Eventos.objects.create(
+                nombre=data["nombre"],
+                descripcion=data["descripcion"],
+                localizacion=data["localizacion"],
+                organizador=data["organizador"],
+                disciplina=data["disciplina"],
+                usuario_id=data["usuario"], 
+                data=datetime.strptime(data["data"], '%Y-%m-%d %H:%M:%S')
+            )
+            return redirect('pagina')
+        except Exception as e:
+            return HttpResponseBadRequest("Error al crear el evento")
+    
     def put(self, request, evento_id):
         try:
             evento = get_object_or_404(Eventos, id=evento_id)
@@ -59,28 +82,5 @@ class EventosView(View):
             return JsonResponse({"mensaje": "Evento eliminado correctamente"})
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
-
-class paginaView(View):
-    @method_decorator(csrf_exempt, name='dispatch')
-    def get(self, request):
-        eventos = Eventos.objects.all().values()
-        return render(request, 'eventos/index.html', {'eventos': eventos})
-    
-    def post(self, request):
-        try:
-            data = request.POST
-            evento = Eventos.objects.create(
-                nombre=data["nombre"],
-                descripcion=data["descripcion"],
-                localizacion=data["localizacion"],
-                organizador=data["organizador"],
-                disciplina=data["disciplina"],
-                usuario_id=data["usuario"], 
-                data=datetime.strptime(data["data"], '%Y-%m-%d %H:%M:%S')
-            )
-            return redirect('pagina')
-        except Exception as e:
-            return HttpResponseBadRequest("Error al crear el evento")
-        
 
     
