@@ -36,7 +36,7 @@ class EventosView(View):
 class paginaView(View):
     @method_decorator(csrf_exempt, name='dispatch')
     def get(self, request):
-        eventos = Eventos.objects.all().values()
+        eventos = Eventos.objects.all()
         return render(request, 'eventos/index.html', {'eventos': eventos})
     
     def post(self, request):
@@ -59,8 +59,7 @@ class paginaView(View):
         try:
             evento = get_object_or_404(Eventos, id=evento_id)
             data = json.loads(request.body)
-            
-            # Actualizar campos
+        
             evento.nombre = data.get("nombre", evento.nombre)
             evento.descripcion = data.get("descripcion", evento.descripcion)
             evento.localizacion = data.get("localizacion", evento.localizacion)
