@@ -55,31 +55,72 @@ class paginaView(View):
         except Exception as e:
             return HttpResponseBadRequest("Error al crear el evento")
     
-    def put(self, request, evento_id):
+    def put(self, request):
         try:
+            # Obtener datos del cuerpo de la petición PUT
+            body = json.loads(request.body.decode('utf-8'))
+            
+            # Obtener el ID del evento a actualizar
+            evento_id = body.get('id')
+            if not evento_id:
+                return HttpResponseBadRequest("ID del evento es requerido")
+            
+            # Buscar el evento
             evento = get_object_or_404(Eventos, id=evento_id)
-            data = json.loads(request.body)
-        
-            evento.nombre = data.get("nombre", evento.nombre)
-            evento.descripcion = data.get("descripcion", evento.descripcion)
-            evento.localizacion = data.get("localizacion", evento.localizacion)
-            evento.organizador = data.get("organizador", evento.organizador)
-            evento.disciplina = data.get("disciplina", evento.disciplina)
-            evento.usuario_id = data.get("usuario", evento.usuario_id)
-            if "data" in data:
-                evento.data = data["data"]
+            
+            # Actualizar los campos
+            evento.nombre = body.get("nombre", evento.nombre)
+            evento.descripcion = body.get("descripcion", evento.descripcion)
+            evento.localizacion = body.get("localizacion", evento.localizacion)
+            evento.organizador = body.get("organizador", evento.organizador)
+            evento.disciplina = body.get("disciplina", evento.disciplina)
+            
+            # Actualizar usuario si se proporciona
+            if "usuario" in body:
+                evento.usuario_id = body["usuario"]
+            
+            # Actualizar fecha si se proporciona
+            if "data" in body:
+                evento.data = datetime.strptime(body["data"], '%Y-%m-%d %H:%M:%S')
             
             evento.save()
-            return JsonResponse({"mensaje": "Evento actualizado correctamente", "id": evento.id})
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Evento actualizado correctamente',
+                'evento_id': evento.id
+            })
+            
+        except json.JSONDecodeError:
+            return HttpResponseBadRequest("Formato JSON inválido")
+        except ValueError as e:
+            return HttpResponseBadRequest(f"Error en formato de fecha: {str(e)}")
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-
-    def delete(self, request, evento_id):
+            return HttpResponseBadRequest(f"Error al actualizar el evento: {str(e)}")
+    
+    def delete(self, request):
         try:
+            # Obtener datos del cuerpo de la petición DELETE
+            body = json.loads(request.body.decode('utf-8'))
+            
+            # Obtener el ID del evento a eliminar
+            evento_id = body.get('id')
+            if not evento_id:
+                return HttpResponseBadRequest("ID del evento es requerido")
+            
+            # Buscar y eliminar el evento
             evento = get_object_or_404(Eventos, id=evento_id)
+            evento_nombre = evento.nombre  # Guardar el nombre para la respuesta
             evento.delete()
-            return JsonResponse({"mensaje": "Evento eliminado correctamente"})
+            
+            return JsonResponse({
+                'success': True,
+                'message': f'Evento "{evento_nombre}" eliminado correctamente',
+                'evento_id': evento_id
+            })
+            
+        except json.JSONDecodeError:
+            return HttpResponseBadRequest("Formato JSON inválido")
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-
+            return HttpResponseBadRequest(f"Error al eliminar el evento: {str(e)}")
     
