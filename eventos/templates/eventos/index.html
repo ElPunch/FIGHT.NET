@@ -35,133 +35,336 @@
     .section-title {
       color: white;
     }
+    
+    /* Estilos para la barra lateral */
+    .sidebar {
+      background-color: #1a1a1a;
+      border-right: 2px solid #333;
+      min-height: calc(100vh - 76px);
+      position: sticky;
+      top: 76px;
+      z-index: 1000;
+    }
+    
+    .sidebar .card {
+      background-color: #2a2a2a;
+      border: 1px solid #444;
+    }
+    
+    .sidebar .form-label {
+      color: #ffffff !important;
+      font-weight: 500;
+    }
+    
+    .sidebar .form-select,
+    .sidebar .form-control {
+      background-color: #333 !important;
+      border-color: #555 !important;
+      color: #fff !important;
+    }
+    
+    .sidebar .form-select:focus,
+    .sidebar .form-control:focus {
+      background-color: #333 !important;
+      border-color: #dc3545 !important;
+      color: #fff !important;
+      box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+    }
+    
+    .sidebar .form-select option {
+      background-color: #333 !important;
+      color: #fff !important;
+    }
+    
+    .filter-header {
+      background: linear-gradient(135deg, #dc3545, #c82333);
+      border-radius: 8px 8px 0 0;
+    }
+    
+    .btn-filter {
+      background: linear-gradient(135deg, #dc3545, #c82333);
+      border: none;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-filter:hover {
+      background: linear-gradient(135deg, #c82333, #a71e2a);
+      transform: translateY(-1px);
+    }
+    
+    .btn-clear {
+      background-color: #6c757d;
+      border: none;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-clear:hover {
+      background-color: #5a6268;
+      transform: translateY(-1px);
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .sidebar {
+        position: relative;
+        top: 0;
+        min-height: auto;
+        border-right: none;
+        border-bottom: 2px solid #333;
+        margin-bottom: 20px;
+      }
+    }
   </style>
 </head>
 <body class="bg-black text-white">
   <nav class="navbar navbar-expand-lg navbar-dark border-bottom border-danger">
-    <div class="container">
+    <div class="container-fluid">
       <a class="navbar-brand fw-bold" href="#">FIGHT.NET</a>
+      <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#crearEventoModal">
+          <i class="bi bi-plus-circle me-2"></i>Crear Evento
+      </button>
     </div>
-    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#crearEventoModal">
-        <i class="bi bi-plus-circle me-2"></i>Crear Evento
-    </button>
   </nav>
-  <div class="container py-5 mt-4">
-    <h2 class="section-title mb-4">Eventos Disponibles</h2>
 
-    <div class="row g-4">
-      {% for evento in eventos %}
-      <div class="col-md-6 col-lg-4">
-        <div class="card evento-card h-100" id="evento-card-{{ evento.id }}">
-          <div class="card-body">
-            <div class="event-date badge bg-danger mb-2">{{ evento.data|date:"d M Y" }}</div>
-            <h5 class="card-title">{{ evento.nombre }}</h5>
-            <p class="card-text"><i class="bi bi-geo-alt"></i> {{ evento.localizacion }}</p>
-            <div class="d-flex justify-content-between align-items-center">
-              <span class="badge bg-secondary">{{ evento.disciplina }}</span>
-              <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#eventDetailModal{{ evento.id }}">Ver Detalles</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Modal de Detalles del Evento -->
-      <div class="modal fade" id="eventDetailModal{{ evento.id }}" tabindex="-1" aria-labelledby="eventDetailModalLabel{{ evento.id }}" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content modal-evento">
-            <div class="modal-header">
-              <h5 class="modal-title" id="eventDetailModalLabel{{ evento.id }}">{{ evento.nombre }}</h5>
-              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-              <p><strong>Disciplina:</strong> {{ evento.disciplina }}</p>
-              <p><strong>Fecha:</strong> {{ evento.data|date:"d M Y H:i" }}</p>
-              <p><strong>Ubicación:</strong> {{ evento.localizacion }}</p>
-              <p><strong>Organizador:</strong> {{ evento.organizador }}</p>
-              <p><strong>Descripción:</strong> {{ evento.descripcion }}</p>
-            </div>
-            <div class="modal-footer justify-content-between">
-              <div>
-                <button type="button" class="btn btn-warning me-2" data-bs-toggle="modal" data-bs-target="#editarEventoModal{{ evento.id }}" data-bs-dismiss="modal">
-                  <i class="bi bi-pencil-square me-1"></i>Editar
-                </button>
-                <button type="button"
-                    class="btn btn-danger"
-                    onclick="eliminarEvento({{ evento.id }}, '{{ evento.nombre|escapejs }}')">
-                    <i class="bi bi-trash me-1"></i>Eliminar
-                </button>
-              </div>
-              <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cerrar</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Modal de Editar Evento -->
-      <div class="modal fade" id="editarEventoModal{{ evento.id }}" tabindex="-1" aria-labelledby="editarEventoModalLabel{{ evento.id }}" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content modal-evento">
-            <div class="modal-header border-warning">
-              <h5 class="modal-title" id="editarEventoModalLabel{{ evento.id }}">
-                <i class="bi bi-pencil-square me-2"></i>Editar Evento: {{ evento.nombre }}
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Barra lateral de filtros -->
+      <div class="col-lg-3 col-md-4 p-0">
+        <div class="sidebar p-3">
+          <div class="card">
+            <div class="card-header filter-header text-center">
+              <h5 class="mb-0 text-white">
+                <i class="bi bi-funnel me-2"></i>Filtros
               </h5>
-              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
-            <form id="editarEventoForm{{ evento.id }}" onsubmit="actualizarEvento(event, {{ evento.id }})">
-              <div class="modal-body">
-                <div class="row g-3">
-                  <div class="col-md-6">
-                    <label for="edit_nombre{{ evento.id }}" class="form-label text-white">Nombre del Evento *</label>
-                    <input type="text" class="form-control bg-dark text-white border-secondary" id="edit_nombre{{ evento.id }}" name="nombre" value="{{ evento.nombre }}" required>
-                  </div>
-                  <div class="col-md-6">
-                    <label for="edit_disciplina{{ evento.id }}" class="form-label text-white">Disciplina *</label>
-                    <select class="form-select bg-dark text-white border-secondary" id="edit_disciplina{{ evento.id }}" name="disciplina" required>
-                      <option value="">Seleccionar disciplina</option>
-                      <option value="MMA" {% if evento.disciplina == "MMA" %}selected{% endif %}>MMA</option>
-                      <option value="Boxeo" {% if evento.disciplina == "Boxeo" %}selected{% endif %}>Boxeo</option>
-                      <option value="Kickboxing" {% if evento.disciplina == "Kickboxing" %}selected{% endif %}>Kickboxing</option>
-                      <option value="Muay Thai" {% if evento.disciplina == "Muay Thai" %}selected{% endif %}>Muay Thai</option>
-                      <option value="Jiu-Jitsu" {% if evento.disciplina == "Jiu-Jitsu" %}selected{% endif %}>Jiu-Jitsu</option>
-                      <option value="Karate" {% if evento.disciplina == "Karate" %}selected{% endif %}>Karate</option>
-                      <option value="Taekwondo" {% if evento.disciplina == "Taekwondo" %}selected{% endif %}>Taekwondo</option>
-                    </select>
-                  </div>
-                  <div class="col-md-6">
-                    <label for="edit_data{{ evento.id }}" class="form-label text-white">Fecha del Evento *</label>
-                    <input type="datetime-local" class="form-control bg-dark text-white border-secondary" id="edit_data{{ evento.id }}" name="data_input" value="{{ evento.data|date:'Y-m-d\TH:i' }}" required>
-                  </div>
-                  <div class="col-md-6">
-                    <label for="edit_organizador{{ evento.id }}" class="form-label text-white">Organizador *</label>
-                    <input type="text" class="form-control bg-dark text-white border-secondary" id="edit_organizador{{ evento.id }}" name="organizador" value="{{ evento.organizador }}" required>
-                  </div>
-                  <div class="col-md-6">
-                    <label for="edit_usuario{{ evento.id }}" class="form-label text-white">ID Usuario *</label>
-                    <input type="number" class="form-control bg-dark text-white border-secondary" id="edit_usuario{{ evento.id }}" name="usuario" value="{{ evento.usuario.id }}" required>
-                  </div>
-                  <div class="col-md-6">
-                    <label for="edit_localizacion{{ evento.id }}" class="form-label text-white">Ubicación *</label>
-                    <input type="text" class="form-control bg-dark text-white border-secondary" id="edit_localizacion{{ evento.id }}" name="localizacion" value="{{ evento.localizacion }}" required>
-                  </div>
-                  <div class="col-12">
-                    <label for="edit_descripcion{{ evento.id }}" class="form-label text-white">Descripción</label>
-                    <textarea class="form-control bg-dark text-white border-secondary" id="edit_descripcion{{ evento.id }}" name="descripcion" rows="4">{{ evento.descripcion }}</textarea>
+            <div class="card-body">
+              <form method="GET" id="filtrosForm">
+                <div class="mb-3">
+                  <label for="disciplina" class="form-label">
+                    <i class="bi bi-trophy me-2"></i>Disciplina
+                  </label>
+                  <select class="form-select" id="disciplina" name="disciplina">
+                    <option value="">Todas las disciplinas</option>
+                    {% for disciplina in disciplinas_disponibles %}
+                      <option value="{{ disciplina }}" {% if disciplina == disciplina_seleccionada %}selected{% endif %}>
+                        {{ disciplina }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="ubicacion" class="form-label">
+                    <i class="bi bi-geo-alt me-2"></i>Ubicación
+                  </label>
+                  <input type="text" 
+                         class="form-control" 
+                         id="ubicacion" 
+                         name="ubicacion" 
+                         placeholder="Buscar por ciudad..." 
+                         value="{{ ubicacion_seleccionada }}">
+                </div>
+                
+                <div class="d-grid gap-2">
+                  <button type="submit" class="btn btn-filter text-white">
+                    <i class="bi bi-search me-2"></i>Aplicar Filtros
+                  </button>
+                  <a href="{% url 'pagina' %}" class="btn btn-clear text-white">
+                    <i class="bi bi-x-circle me-2"></i>Limpiar Filtros
+                  </a>
+                </div>
+              </form>
+              
+              <!-- Contador de resultados -->
+              <div class="mt-3 text-center">
+                <small class="text-muted">
+                  <i class="bi bi-calendar-event me-1"></i>
+                  {{ eventos.count }} evento{{ eventos.count|pluralize }}
+                  {% if disciplina_seleccionada or ubicacion_seleccionada %}
+                    encontrado{{ eventos.count|pluralize }}
+                  {% endif %}
+                </small>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Filtros activos -->
+          {% if disciplina_seleccionada or ubicacion_seleccionada %}
+          <div class="card mt-3">
+            <div class="card-body">
+              <h6 class="text-white mb-2">
+                <i class="bi bi-tags me-2"></i>Filtros Activos:
+              </h6>
+              {% if disciplina_seleccionada %}
+                <span class="badge bg-danger me-2 mb-1">
+                  <i class="bi bi-trophy me-1"></i>{{ disciplina_seleccionada }}
+                  <a href="?ubicacion={{ ubicacion_seleccionada }}" class="text-white text-decoration-none ms-1">
+                    <i class="bi bi-x"></i>
+                  </a>
+                </span>
+              {% endif %}
+              {% if ubicacion_seleccionada %}
+                <span class="badge bg-warning text-dark mb-1">
+                  <i class="bi bi-geo-alt me-1"></i>{{ ubicacion_seleccionada }}
+                  <a href="?disciplina={{ disciplina_seleccionada }}" class="text-dark text-decoration-none ms-1">
+                    <i class="bi bi-x"></i>
+                  </a>
+                </span>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Contenido principal -->
+      <div class="col-lg-9 col-md-8">
+        <div class="container py-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="section-title mb-0">
+              Eventos Disponibles
+              {% if disciplina_seleccionada or ubicacion_seleccionada %}
+                <small class="text-muted fs-6">- Filtrados</small>
+              {% endif %}
+            </h2>
+          </div>
+
+          <div class="row g-4">
+            {% for evento in eventos %}
+            <div class="col-xl-4 col-lg-6 col-md-12">
+              <div class="card evento-card h-100" id="evento-card-{{ evento.id }}">
+                <div class="card-body">
+                  <div class="event-date badge bg-danger mb-2">{{ evento.data|date:"d M Y" }}</div>
+                  <h5 class="card-title">{{ evento.nombre }}</h5>
+                  <p class="card-text">
+                    <i class="bi bi-geo-alt text-danger"></i> {{ evento.localizacion }}
+                  </p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span class="badge bg-secondary">{{ evento.disciplina }}</span>
+                    <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#eventDetailModal{{ evento.id }}">
+                      Ver Detalles
+                    </button>
                   </div>
                 </div>
               </div>
-              <div class="modal-footer border-warning justify-content-between">
-                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" class="btn btn-warning">
-                  <i class="bi bi-check2-circle me-1"></i>Actualizar Evento
-                </button>
+            </div>
+            
+            <!-- Modal de Detalles del Evento -->
+            <div class="modal fade" id="eventDetailModal{{ evento.id }}" tabindex="-1" aria-labelledby="eventDetailModalLabel{{ evento.id }}" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content modal-evento">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="eventDetailModalLabel{{ evento.id }}">{{ evento.nombre }}</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p><strong>Disciplina:</strong> {{ evento.disciplina }}</p>
+                    <p><strong>Fecha:</strong> {{ evento.data|date:"d M Y H:i" }}</p>
+                    <p><strong>Ubicación:</strong> {{ evento.localizacion }}</p>
+                    <p><strong>Organizador:</strong> {{ evento.organizador }}</p>
+                    <p><strong>Descripción:</strong> {{ evento.descripcion }}</p>
+                  </div>
+                  <div class="modal-footer justify-content-between">
+                    <div>
+                      <button type="button" class="btn btn-warning me-2" data-bs-toggle="modal" data-bs-target="#editarEventoModal{{ evento.id }}" data-bs-dismiss="modal">
+                        <i class="bi bi-pencil-square me-1"></i>Editar
+                      </button>
+                      <button type="button"
+                          class="btn btn-danger"
+                          onclick="eliminarEvento({{ evento.id }}, '{{ evento.nombre|escapejs }}')">
+                          <i class="bi bi-trash me-1"></i>Eliminar
+                      </button>
+                    </div>
+                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cerrar</button>
+                  </div>
+                </div>
               </div>
-            </form>
+            </div>
+
+            <!-- Modal de Editar Evento -->
+            <div class="modal fade" id="editarEventoModal{{ evento.id }}" tabindex="-1" aria-labelledby="editarEventoModalLabel{{ evento.id }}" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content modal-evento">
+                  <div class="modal-header border-warning">
+                    <h5 class="modal-title" id="editarEventoModalLabel{{ evento.id }}">
+                      <i class="bi bi-pencil-square me-2"></i>Editar Evento: {{ evento.nombre }}
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                  </div>
+                  <form id="editarEventoForm{{ evento.id }}" onsubmit="actualizarEvento(event, {{ evento.id }})">
+                    <div class="modal-body">
+                      <div class="row g-3">
+                        <div class="col-md-6">
+                          <label for="edit_nombre{{ evento.id }}" class="form-label text-white">Nombre del Evento *</label>
+                          <input type="text" class="form-control bg-dark text-white border-secondary" id="edit_nombre{{ evento.id }}" name="nombre" value="{{ evento.nombre }}" required>
+                        </div>
+                        <div class="col-md-6">
+                          <label for="edit_disciplina{{ evento.id }}" class="form-label text-white">Disciplina *</label>
+                          <select class="form-select bg-dark text-white border-secondary" id="edit_disciplina{{ evento.id }}" name="disciplina" required>
+                            <option value="">Seleccionar disciplina</option>
+                            <option value="MMA" {% if evento.disciplina == "MMA" %}selected{% endif %}>MMA</option>
+                            <option value="Boxeo" {% if evento.disciplina == "Boxeo" %}selected{% endif %}>Boxeo</option>
+                            <option value="Kickboxing" {% if evento.disciplina == "Kickboxing" %}selected{% endif %}>Kickboxing</option>
+                            <option value="Muay Thai" {% if evento.disciplina == "Muay Thai" %}selected{% endif %}>Muay Thai</option>
+                            <option value="Jiu-Jitsu" {% if evento.disciplina == "Jiu-Jitsu" %}selected{% endif %}>Jiu-Jitsu</option>
+                            <option value="Karate" {% if evento.disciplina == "Karate" %}selected{% endif %}>Karate</option>
+                            <option value="Taekwondo" {% if evento.disciplina == "Taekwondo" %}selected{% endif %}>Taekwondo</option>
+                          </select>
+                        </div>
+                        <div class="col-md-6">
+                          <label for="edit_data{{ evento.id }}" class="form-label text-white">Fecha del Evento *</label>
+                          <input type="datetime-local" class="form-control bg-dark text-white border-secondary" id="edit_data{{ evento.id }}" name="data_input" value="{{ evento.data|date:'Y-m-d\TH:i' }}" required>
+                        </div>
+                        <div class="col-md-6">
+                          <label for="edit_organizador{{ evento.id }}" class="form-label text-white">Organizador *</label>
+                          <input type="text" class="form-control bg-dark text-white border-secondary" id="edit_organizador{{ evento.id }}" name="organizador" value="{{ evento.organizador }}" required>
+                        </div>
+                        <div class="col-md-6">
+                          <label for="edit_usuario{{ evento.id }}" class="form-label text-white">ID Usuario *</label>
+                          <input type="number" class="form-control bg-dark text-white border-secondary" id="edit_usuario{{ evento.id }}" name="usuario" value="{{ evento.usuario.id }}" required>
+                        </div>
+                        <div class="col-md-6">
+                          <label for="edit_localizacion{{ evento.id }}" class="form-label text-white">Ubicación *</label>
+                          <input type="text" class="form-control bg-dark text-white border-secondary" id="edit_localizacion{{ evento.id }}" name="localizacion" value="{{ evento.localizacion }}" required>
+                        </div>
+                        <div class="col-12">
+                          <label for="edit_descripcion{{ evento.id }}" class="form-label text-white">Descripción</label>
+                          <textarea class="form-control bg-dark text-white border-secondary" id="edit_descripcion{{ evento.id }}" name="descripcion" rows="4">{{ evento.descripcion }}</textarea>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer border-warning justify-content-between">
+                      <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
+                      <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-check2-circle me-1"></i>Actualizar Evento
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+              <div class="text-center py-5">
+                <i class="bi bi-calendar-x display-1 text-muted"></i>
+                <h3 class="text-muted mt-3">No hay eventos disponibles</h3>
+                {% if disciplina_seleccionada or ubicacion_seleccionada %}
+                  <p class="text-muted">Intenta ajustar los filtros de búsqueda</p>
+                  <a href="{% url 'pagina' %}" class="btn btn-outline-danger">
+                    <i class="bi bi-arrow-left me-2"></i>Ver todos los eventos
+                  </a>
+                {% else %}
+                  <p class="text-muted">¡Sé el primero en crear un evento!</p>
+                  <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#crearEventoModal">
+                    <i class="bi bi-plus-circle me-2"></i>Crear Evento
+                  </button>
+                {% endif %}
+              </div>
+            </div>
+            {% endfor %}
           </div>
         </div>
       </div>
-      {% empty %}
-      <p>No hay eventos disponibles.</p>
-      {% endfor %}
     </div>
   </div>
 
@@ -342,6 +545,22 @@
         });
       }
     }
+
+    // Filtros en tiempo real para ubicación
+    document.getElementById('ubicacion').addEventListener('input', function() {
+      // Opcional: aplicar filtro automáticamente después de un breve delay
+      clearTimeout(this.searchTimeout);
+      this.searchTimeout = setTimeout(() => {
+        // Aquí puedes agregar lógica para filtrar automáticamente si lo deseas
+      }, 500);
+    });
+
+    // Auto-submit del formulario al cambiar disciplina
+    document.getElementById('disciplina').addEventListener('change', function() {
+      if (this.value !== '') {
+        document.getElementById('filtrosForm').submit();
+      }
+    });
   </script>
 </body>
 </html>
