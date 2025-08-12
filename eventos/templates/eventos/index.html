@@ -83,10 +83,12 @@
             <div class="modal-footer justify-content-between">
               <div>
                 <button type="button" class="btn btn-warning me-2" data-bs-toggle="modal" data-bs-target="#editarEventoModal{{ evento.id }}" data-bs-dismiss="modal">
-                  <i class="bi bi-pencil-square me-1"></i>Actualizar
+                  <i class="bi bi-pencil-square me-1"></i>Editar
                 </button>
-                <button type="button" class="btn btn-danger" onclick="eliminarEvento({{ eventoId }}, '{{ evento.nombre }}')">
-                  <i class="bi bi-trash me-1"></i>Eliminar
+                <button type="button"
+                    class="btn btn-danger"
+                    onclick="eliminarEvento({{ evento.id }}, '{{ evento.nombre|escapejs }}')">
+                    <i class="bi bi-trash me-1"></i>Eliminar
                 </button>
               </div>
               <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cerrar</button>
@@ -105,7 +107,7 @@
               </h5>
               <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
-            <form id="editarEventoForm{{ evento.id }}" onsubmit="actualizarEvento(event, {{ evento.id }})">>
+            <form id="editarEventoForm{{ evento.id }}" onsubmit="actualizarEvento(event, {{ evento.id }})">
               <div class="modal-body">
                 <div class="row g-3">
                   <div class="col-md-6">
