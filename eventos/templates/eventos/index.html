@@ -85,7 +85,7 @@
                 <button type="button" class="btn btn-warning me-2" data-bs-toggle="modal" data-bs-target="#editarEventoModal{{ evento.id }}" data-bs-dismiss="modal">
                   <i class="bi bi-pencil-square me-1"></i>Actualizar
                 </button>
-                <button type="button" class="btn btn-danger" onclick="eliminarEvento({{ evento.id }}, '{{ evento.nombre }}')">
+                <button type="button" class="btn btn-danger" onclick="eliminarEvento({{ eventoId }}, '{{ evento.nombre }}')">
                   <i class="bi bi-trash me-1"></i>Eliminar
                 </button>
               </div>
@@ -105,7 +105,7 @@
               </h5>
               <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
-            <form id="editarEventoForm{{ evento.id }}" onsubmit="actualizarEvento(event, {{ evento.id }})">
+            <form id="editarEventoForm{{ evento.id }}" onsubmit="actualizarEvento(event, {{ evento.id }})">>
               <div class="modal-body">
                 <div class="row g-3">
                   <div class="col-md-6">
@@ -279,7 +279,7 @@
         data: formattedDate
       };
 
-      fetch('/eventos/', {
+      fetch('/pagina/', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -305,7 +305,7 @@
     // Función para eliminar evento
     function eliminarEvento(eventoId, eventoNombre) {
       if (confirm(`¿Estás seguro de que quieres eliminar el evento "${eventoNombre}"?`)) {
-        fetch('/eventos/', {
+        fetch('/pagina/', {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
