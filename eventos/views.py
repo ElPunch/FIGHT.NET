@@ -37,7 +37,31 @@ class paginaView(View):
     @method_decorator(csrf_exempt, name='dispatch')
     def get(self, request):
         eventos = Eventos.objects.all()
-        return render(request, 'eventos/index.html', {'eventos': eventos})
+        
+        # Obtener parámetros de filtro
+        disciplina_filtro = request.GET.get('disciplina', '')
+        ubicacion_filtro = request.GET.get('ubicacion', '')
+        
+        # Aplicar filtros si existen
+        if disciplina_filtro:
+            eventos = eventos.filter(disciplina=disciplina_filtro)
+        
+        if ubicacion_filtro:
+            eventos = eventos.filter(localizacion__icontains=ubicacion_filtro)
+        
+        # Obtener listas únicas para los filtros
+        disciplinas_disponibles = Eventos.objects.values_list('disciplina', flat=True).distinct().order_by('disciplina')
+        ubicaciones_disponibles = Eventos.objects.values_list('localizacion', flat=True).distinct().order_by('localizacion')
+        
+        context = {
+            'eventos': eventos,
+            'disciplinas_disponibles': disciplinas_disponibles,
+            'ubicaciones_disponibles': ubicaciones_disponibles,
+            'disciplina_seleccionada': disciplina_filtro,
+            'ubicacion_seleccionada': ubicacion_filtro,
+        }
+        
+        return render(request, 'eventos/index.html', context)
     
     def post(self, request):
         try:

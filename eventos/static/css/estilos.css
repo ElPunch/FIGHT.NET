@@ -1,0 +1,27 @@
+.bg-black {
+      background-color: #000 !important;
+    }
+    .evento-card {
+      background-color: #1a1a1a;
+      border: 1px solid #333;
+      color: white;
+    }
+    .modal-evento {
+      background-color: #1a1a1a;
+      color: white;
+    }
+    .modal-evento .modal-body {
+      color: white !important;
+    }
+    .modal-evento .modal-body p {
+      color: white !important;
+    }
+    .modal-evento .modal-header {
+      color: white !important;
+    }
+    .modal-evento .modal-title {
+      color: white !important;
+    }
+    .section-title {
+      color: white;
+    }
