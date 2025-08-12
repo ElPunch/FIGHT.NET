@@ -52,7 +52,7 @@
     <div class="row g-4">
       {% for evento in eventos %}
       <div class="col-md-6 col-lg-4">
-        <div class="card evento-card h-100">
+        <div class="card evento-card h-100" id="evento-card-{{ evento.id }}">
           <div class="card-body">
             <div class="event-date badge bg-danger mb-2">{{ evento.data|date:"d M Y" }}</div>
             <h5 class="card-title">{{ evento.nombre }}</h5>
@@ -64,6 +64,8 @@
           </div>
         </div>
       </div>
+      
+      <!-- Modal de Detalles del Evento -->
       <div class="modal fade" id="eventDetailModal{{ evento.id }}" tabindex="-1" aria-labelledby="eventDetailModalLabel{{ evento.id }}" aria-hidden="true">
         <div class="modal-dialog modal-lg">
           <div class="modal-content modal-evento">
@@ -73,14 +75,85 @@
             </div>
             <div class="modal-body">
               <p><strong>Disciplina:</strong> {{ evento.disciplina }}</p>
-              <p><strong>Fecha:</strong> {{ evento.data|date:"d M Y" }}</p>
+              <p><strong>Fecha:</strong> {{ evento.data|date:"d M Y H:i" }}</p>
               <p><strong>Ubicación:</strong> {{ evento.localizacion }}</p>
               <p><strong>Organizador:</strong> {{ evento.organizador }}</p>
               <p><strong>Descripción:</strong> {{ evento.descripcion }}</p>
             </div>
             <div class="modal-footer justify-content-between">
+              <div>
+                <button type="button" class="btn btn-warning me-2" data-bs-toggle="modal" data-bs-target="#editarEventoModal{{ evento.id }}" data-bs-dismiss="modal">
+                  <i class="bi bi-pencil-square me-1"></i>Actualizar
+                </button>
+                <button type="button" class="btn btn-danger" onclick="eliminarEvento({{ evento.id }}, '{{ evento.nombre }}')">
+                  <i class="bi bi-trash me-1"></i>Eliminar
+                </button>
+              </div>
               <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cerrar</button>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal de Editar Evento -->
+      <div class="modal fade" id="editarEventoModal{{ evento.id }}" tabindex="-1" aria-labelledby="editarEventoModalLabel{{ evento.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content modal-evento">
+            <div class="modal-header border-warning">
+              <h5 class="modal-title" id="editarEventoModalLabel{{ evento.id }}">
+                <i class="bi bi-pencil-square me-2"></i>Editar Evento: {{ evento.nombre }}
+              </h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <form id="editarEventoForm{{ evento.id }}" onsubmit="actualizarEvento(event, {{ evento.id }})">
+              <div class="modal-body">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="edit_nombre{{ evento.id }}" class="form-label text-white">Nombre del Evento *</label>
+                    <input type="text" class="form-control bg-dark text-white border-secondary" id="edit_nombre{{ evento.id }}" name="nombre" value="{{ evento.nombre }}" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="edit_disciplina{{ evento.id }}" class="form-label text-white">Disciplina *</label>
+                    <select class="form-select bg-dark text-white border-secondary" id="edit_disciplina{{ evento.id }}" name="disciplina" required>
+                      <option value="">Seleccionar disciplina</option>
+                      <option value="MMA" {% if evento.disciplina == "MMA" %}selected{% endif %}>MMA</option>
+                      <option value="Boxeo" {% if evento.disciplina == "Boxeo" %}selected{% endif %}>Boxeo</option>
+                      <option value="Kickboxing" {% if evento.disciplina == "Kickboxing" %}selected{% endif %}>Kickboxing</option>
+                      <option value="Muay Thai" {% if evento.disciplina == "Muay Thai" %}selected{% endif %}>Muay Thai</option>
+                      <option value="Jiu-Jitsu" {% if evento.disciplina == "Jiu-Jitsu" %}selected{% endif %}>Jiu-Jitsu</option>
+                      <option value="Karate" {% if evento.disciplina == "Karate" %}selected{% endif %}>Karate</option>
+                      <option value="Taekwondo" {% if evento.disciplina == "Taekwondo" %}selected{% endif %}>Taekwondo</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="edit_data{{ evento.id }}" class="form-label text-white">Fecha del Evento *</label>
+                    <input type="datetime-local" class="form-control bg-dark text-white border-secondary" id="edit_data{{ evento.id }}" name="data_input" value="{{ evento.data|date:'Y-m-d\TH:i' }}" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="edit_organizador{{ evento.id }}" class="form-label text-white">Organizador *</label>
+                    <input type="text" class="form-control bg-dark text-white border-secondary" id="edit_organizador{{ evento.id }}" name="organizador" value="{{ evento.organizador }}" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="edit_usuario{{ evento.id }}" class="form-label text-white">ID Usuario *</label>
+                    <input type="number" class="form-control bg-dark text-white border-secondary" id="edit_usuario{{ evento.id }}" name="usuario" value="{{ evento.usuario.id }}" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="edit_localizacion{{ evento.id }}" class="form-label text-white">Ubicación *</label>
+                    <input type="text" class="form-control bg-dark text-white border-secondary" id="edit_localizacion{{ evento.id }}" name="localizacion" value="{{ evento.localizacion }}" required>
+                  </div>
+                  <div class="col-12">
+                    <label for="edit_descripcion{{ evento.id }}" class="form-label text-white">Descripción</label>
+                    <textarea class="form-control bg-dark text-white border-secondary" id="edit_descripcion{{ evento.id }}" name="descripcion" rows="4">{{ evento.descripcion }}</textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer border-warning justify-content-between">
+                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-warning">
+                  <i class="bi bi-check2-circle me-1"></i>Actualizar Evento
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -89,7 +162,9 @@
       {% endfor %}
     </div>
   </div>
-    <div class="modal fade" id="crearEventoModal" tabindex="-1" aria-labelledby="crearEventoModalLabel" aria-hidden="true">
+
+  <!-- Modal de Crear Evento -->
+  <div class="modal fade" id="crearEventoModal" tabindex="-1" aria-labelledby="crearEventoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content modal-evento">
         <div class="modal-header border-danger">
@@ -154,24 +229,117 @@
     </div>
   </div>
 
-  
-
+  <!-- JavaScript -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+    // Función para obtener el token CSRF
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+
+    // Formatear fecha para el formulario de creación
     document.getElementById('crearEventoForm').addEventListener('submit', function(e) {
-      const dataInput = document.getElementById('data');
-      const dataFormatted = document.getElementById('data_formatted');
-      
-      if (dataInput.value) {
-        // Convertir datetime-local a formato YYYY-MM-DD HH:MM:SS
-        const date = new Date(dataInput.value);
-        const formattedDate = date.getFullYear() + '-' + 
-                             String(date.getMonth() + 1).padStart(2, '0') + '-' + 
-                             String(date.getDate()).padStart(2, '0') + ' ' + 
-                             String(date.getHours()).padStart(2, '0') + ':' + 
-                             String(date.getMinutes()).padStart(2, '0') + ':00';
-        dataFormatted.value = formattedDate;
+      const dataInput = document.getElementById('data').value;
+      if (dataInput) {
+        const formattedDate = new Date(dataInput).toISOString().slice(0, 19).replace('T', ' ');
+        document.getElementById('data_formatted').value = formattedDate;
       }
     });
+
+    // Función para actualizar evento
+    function actualizarEvento(event, eventoId) {
+      event.preventDefault();
+      
+      const form = event.target;
+      const formData = new FormData(form);
+      
+      // Formatear fecha
+      const dataInput = formData.get('data_input');
+      const formattedDate = new Date(dataInput).toISOString().slice(0, 19).replace('T', ' ');
+      
+      const eventoData = {
+        id: eventoId,
+        nombre: formData.get('nombre'),
+        descripcion: formData.get('descripcion'),
+        localizacion: formData.get('localizacion'),
+        organizador: formData.get('organizador'),
+        disciplina: formData.get('disciplina'),
+        usuario: formData.get('usuario'),
+        data: formattedDate
+      };
+
+      fetch('/eventos/', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify(eventoData)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert('Evento actualizado correctamente');
+          location.reload(); // Recargar la página para mostrar los cambios
+        } else {
+          alert('Error al actualizar el evento: ' + data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Error al actualizar el evento');
+      });
+    }
+
+    // Función para eliminar evento
+    function eliminarEvento(eventoId, eventoNombre) {
+      if (confirm(`¿Estás seguro de que quieres eliminar el evento "${eventoNombre}"?`)) {
+        fetch('/eventos/', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+          },
+          body: JSON.stringify({ id: eventoId })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert(data.message);
+            // Ocultar la tarjeta del evento eliminado
+            const eventoCard = document.getElementById(`evento-card-${eventoId}`);
+            if (eventoCard) {
+              eventoCard.style.display = 'none';
+            }
+            // Cerrar cualquier modal abierto
+            const modals = document.querySelectorAll('.modal.show');
+            modals.forEach(modal => {
+              const modalInstance = bootstrap.Modal.getInstance(modal);
+              if (modalInstance) {
+                modalInstance.hide();
+              }
+            });
+          } else {
+            alert('Error al eliminar el evento: ' + data.message);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Error al eliminar el evento');
+        });
+      }
+    }
   </script>
+</body>
 </html>

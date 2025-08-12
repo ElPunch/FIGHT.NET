@@ -24,4 +24,5 @@ urlpatterns = [
     path('eventos/', EventosView.as_view(), name='eventos'),
     path('pagina/', paginaView.as_view(), name='pagina'),
     path('eventos/<int:evento_id>/', paginaView.as_view(), name='evento_crud'),
+    
 ]
