@@ -6,7 +6,6 @@ Fight.net
 
 ## Install & Dependence
 - python
-- pytorch
 - numpy
 
 ## Use
